@@ -91,6 +91,7 @@ if __name__ == "__main__":
     # Print the stored equivalent values for each pair of decklists
     for decks, equivalents in masterDuplicates.items():
         deck1_name = decks
+        
         deck2_name = decks
         print(f"Equivalent items in {deck1_name} and {deck2_name}: {equivalents}")
 
