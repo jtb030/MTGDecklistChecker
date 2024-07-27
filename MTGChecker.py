@@ -38,7 +38,7 @@ def listInput():
 
     print("\nEnter/Paste decklist")
     # print("Each card should be separated by a new line")
-    print("End input with blank line(Enter) & Ctrl+D")
+    print("End input with blank line(Enter) & Ctrl+D(MacOS/Linux) or Ctrl+Z & Enter (Windows)")
     deckListInput = []
     while True:
         try:
