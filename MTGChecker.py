@@ -36,9 +36,9 @@ def listInput():
     # else:
     #     print("\nEnter/Paste next decklist\nEnd input with blank line & Ctrl+D")
 
-    print("\nEnter/Paste decklist")
+    print("\nEnter/Paste Decklist (Each Item Should Be Separated by a Newline)")
     # print("Each card should be separated by a new line")
-    print("End input with blank line(Enter) & Ctrl+D(MacOS/Linux) or Ctrl+Z & Enter (Windows)")
+    print("To End Input: \n\t Enter Blank Line \n\t Input Ctrl+D (Mac/OS)/Ctrl+Z+Enter (Windows)")
     deckListInput = []
     while True:
         try:
@@ -91,7 +91,6 @@ if __name__ == "__main__":
     # Print the stored equivalent values for each pair of decklists
     for decks, equivalents in masterDuplicates.items():
         deck1_name = decks
-        
         deck2_name = decks
         print(f"Equivalent items in {deck1_name} and {deck2_name}: {equivalents}")
 
