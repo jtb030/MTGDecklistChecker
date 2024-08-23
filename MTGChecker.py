@@ -27,14 +27,6 @@ def createDecklistDict():
         return {}
 
 def listInput():
-    # listCount = len(newDecklistDict)
-    # print(listCount)
-
-    # if isFirst == True:
-    #     print("\nEnter/Paste first decklist\nEnd input with blank line & Ctrl+D")
-    #     isFirst = False
-    # else:
-    #     print("\nEnter/Paste next decklist\nEnd input with blank line & Ctrl+D")
 
     print("\nEnter/Paste Decklist (Each Item Should Be Separated by a Newline)")
     # print("Each card should be separated by a new line")
@@ -98,36 +90,3 @@ if __name__ == "__main__":
     print("\nMaster list of equivalents found:")
     for item, decks in masterDuplicates.items():
         print(f"Item {item} found in {', '.join(decks)}")
-
-    # # Compare each decklist with every other decklist
-    # decklistKeys = list(newDecklistDict.keys())
-    # for i in range(len(decklistKeys)):
-    #     for j in range(i + 1, len(decklistKeys)):
-    #         deck1Name = decklistKeys[i]
-    #         deck2Name = decklistKeys[j]
-    #         print(f"Comparing decklists: {deck1Name} with {deck2Name}")
-    #         duplicateFinder(newDecklistDict[deck1Name], newDecklistDict[deck2Name])
-    #         equivalents = duplicateFinder(newDecklistDict[deck1Name], newDecklistDict[deck2Name])
-    #         masterDuplicates[(deck1Name, deck2Name)] = equivalents
-
-    
-
-    # # Print the stored equivalent values
-    # for decks, equivalents in masterDuplicates.items():
-    #     deck1Name, deck2Name = decks
-    #     print(f"Equivalent items in {deck1Name} and {deck2Name}: {equivalents}")
-    #     equivalents = duplicateFinder(newDecklistDict[deck1Name], newDecklistDict[deck2Name])
-    #     for item in equivalents:
-    #         if item not in masterDuplicates:
-    #             masterDuplicates[item] = set()
-    #         masterDuplicates[item].update([deck1Name, deck2Name])
-
-    # # Print the master list of equivalents
-    # print("\nMaster list of equivalents found:")
-    # for item, decks in masterDuplicates.items():
-    #     print(f"Item {item} found in {', '.join(decks)}")
-
-
-    # # # Testing Line to Print contents of arrays
-    # # for name, array in newDecklistDict.items():
-    # #     print(f"{name}: {array}")
