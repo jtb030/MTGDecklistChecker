@@ -1,3 +1,5 @@
+import os
+
 #########################
 #FUNCTION DECLARATIONS
 #########################
@@ -8,9 +10,9 @@ def createDecklistDict():
         # Each Deck/List assigned as own array
         # Creates Dynamic # of arrays based on user input
         
-        deckNamesIn = input("Enter the names of the arrays, separated by commas: ")
+        deckNamesIn = input("Enter the names of the deck lists to check, separated by commas: ")
         if not deckNamesIn.strip():
-            raise ValueError("Array names cannot be empty.")
+            raise ValueError("Names cannot be empty. :(")
         deckNamesList = [name.strip() for name in deckNamesIn.split(',') if name.strip()]
         
         # Create a dictionary to hold the arrays
@@ -29,18 +31,25 @@ def createDecklistDict():
 def listInput():
 
     print("\nEnter/Paste Decklist (Each Item Should Be Separated by a Newline)")
-    # print("Each card should be separated by a new line")
-    print("To End Input: \n\t Enter Blank Line \n\t Input Ctrl+D (Mac/OS)/Ctrl+Z+Enter (Windows)")
+    print("To End Input: \n\t Enter two consecutive blank lines \n\t Or use Ctrl+D (Mac/Unix) / Ctrl+Z+Enter (Windows)")
     deckListInput = []
+    empty_line_count = 0
     while True:
         try:
-            line = input()
+            line = input().strip()
+            if not line:
+                empty_line_count += 1
+                if empty_line_count == 2:
+                    break
+            else:
+                empty_line_count = 0
+                deckListInput.append(line)
         except EOFError:
             break
-        deckListInput.append(line)
 
-    #TEST LINE
-    # print(deckListInput)
+    # Remove any trailing empty lines
+    while deckListInput and not deckListInput[-1]:
+        deckListInput.pop()
 
     return deckListInput
 
@@ -54,18 +63,32 @@ def duplicateFinder(deck1, deck2):
                 duplicates.append(item1)
     return duplicates
 
+def save_results_to_file(masterDuplicates, decklist_names):
+    # Function to optionally save results to a file
+    filename = "duplicate_results.txt"
+    with open(filename, 'w') as f:
+        f.write("Master list of equivalents found:\n")
+        for item, decks in masterDuplicates.items():
+            ordered_decks = [deck for deck in decklist_names if deck in decks]
+            count = len(ordered_decks)
+            f.write(f"{item} found {count} time{'s' if count > 1 else ''} in {', '.join(ordered_decks)}\n")
+    print(f"Results saved to {filename}")
+
 
 #########################
 #MAIN LOGIC
 #########################
 
 if __name__ == "__main__":
+    # Clear the console
+    os.system('cls' if os.name == 'nt' else 'clear')
+    
     newDecklistDict = createDecklistDict() #Create decklist dict with names & empty values
     masterDuplicates = {}
     decklist_names = list(newDecklistDict.keys())  # Preserve the order of entered decklists
 
     # Display the created arrays
-    for name, array in newDecklistDict.items(): #Fill each decklist with values gathered from user input
+    for name, array in newDecklistDict.items(): #Filleach decklist with values gathered from user input
         newDecklistDict[name] = listInput()
 
 
