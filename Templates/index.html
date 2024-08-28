@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTG Deck Checker</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+</head>
+<body>
+    <h1>MTG Deck Checker</h1>
+    <form id="deckForm">
+        <label for="deck_names">Deck Names (comma-separated):</label><br>
+        <input type="text" id="deck_names" name="deck_names" required><br><br>
+        <label for="deck_lists">Deck Lists (each deck name followed by its cards, one per line):</label><br>
+        <textarea id="deck_lists" name="deck_lists" rows="10" cols="50" required></textarea><br><br>
+        <input type="submit" value="Check Decks">
+    </form>
+    <div id="results"></div>
+
+    <script>
+        $(document).ready(function() {
+            $('#deckForm').submit(function(e) {
+                e.preventDefault();
+                $.ajax({
+                    url: '/',
+                    method: 'POST',
+                    data: $(this).serialize(),
+                    success: function(response) {
+                        $('#results').empty();
+                        response.forEach(function(result) {
+                            $('#results').append('<p>' + result + '</p>');
+                        });
+                    }
+                });
+            });
+        });
+    </script>
+</body>
+</html>
