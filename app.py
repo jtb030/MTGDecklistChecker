@@ -1,10 +1,11 @@
-from flask import Flask, render_template, request, jsonify
-from MTGChecker import createDecklistDict, duplicateFinder
+from flask import Flask, render_template, request
+from MTGChecker import duplicateFinder
 
 app = Flask(__name__)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    results = []
     if request.method == 'POST':
         deck_names = request.form.get('deck_names')
         deck_lists = request.form.get('deck_lists')
@@ -36,15 +37,12 @@ def index():
                     masterDuplicates[item].update([deck1_name, deck2_name])
 
         # Prepare results
-        results = []
         for item, decks in masterDuplicates.items():
             ordered_decks = [deck for deck in deck_names_list if deck in decks]
             count = len(ordered_decks)
             results.append(f"{item} found {count} time{'s' if count > 1 else ''} in {', '.join(ordered_decks)}")
 
-        return jsonify(results)
-
-    return render_template('index.html')
+    return render_template('index.html', results=results)
 
 if __name__ == '__main__':
     app.run(debug=True)
