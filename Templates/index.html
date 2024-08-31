@@ -9,6 +9,8 @@
             background-color: #121212; /* Light gray background */
             color: #ecf0f1; /* Dark gray text */
             font-family: Arial, sans-serif;
+            margin: 0; /* Remove default body margin */
+            padding: 0; /* Remove default body padding */
         }
         h1 {
             color: #f0a43d; /* Dark blue-gray header */
@@ -51,26 +53,74 @@
                 width: 100%;
             }
         }
+        
+        .container {
+            display: flex;
+            justify-content: space-between;
+            max-width: 100%; /* Allow container to take full width */
+            margin: 0 auto;
+            padding: 15px; /* Reduced padding */
+        }
+        
+        .main-form {
+            flex: 1;
+            margin-right: 15px;
+        }
+        
+        .instructions {
+            flex: 1;
+            background-color: #222;
+            padding: 20px;
+            border-radius: 5px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 5px; /* Further reduce padding on mobile */
+            }
+            
+            .main-form, .instructions {
+                width: 100%;
+                margin-right: 0;
+                margin-bottom: 20px;
+            }
+        }
     </style>
 </head>
 <body>
     <h1>MTG Deck Checker</h1>
-    <form id="deckForm" method="POST">
-        <label for="deck_name">Deck Name:</label><br>
-        <input type="text" id="deck_name" name="deck_name">
-        <button type="button" id="add_deck_name">Add New Deck</button><br><br>
-        
-        <div id="saved_decks" style="display: none;">
-            <h3>Saved Decks</h3>
-            <div id="deck_checkboxes"></div>
-        </div><br>
-        
-        <textarea id="deck_contents" name="deck_contents" rows="10" required
-            placeholder="Add at least 2 deck names to enter contents"
-            disabled></textarea><br><br>
-        <input type="hidden" id="all_decks" name="all_decks" required>
-        <input type="submit" value="Check Decks">
-    </form>
+    <div class="container">
+        <div class="main-form">
+            <form id="deckForm" method="POST">
+                <label for="deck_name">Deck Name:</label><br>
+                <input type="text" id="deck_name" name="deck_name">
+                <button type="button" id="add_deck_name">Add New Deck</button><br><br>
+                
+                <div id="saved_decks" style="display: none;">
+                    <h3>Saved Decks</h3>
+                    <div id="deck_checkboxes"></div>
+                </div><br>
+                
+                <textarea id="deck_contents" name="deck_contents" rows="10" required
+                    placeholder="Add at least 2 deck names to enter contents"
+                    disabled></textarea><br><br>
+                <input type="hidden" id="all_decks" name="all_decks" required>
+                <input type="submit" value="Check Decks">
+            </form>
+        </div>
+        <div class="instructions">
+            <h2>Instructions</h2>
+            <ol>
+                <li>Enter a deck name in the "Deck Name" field.</li>
+                <li>Click "Add New Deck" to save the deck name.</li>
+                <li>Repeat steps 1-2 to add at least two decks.</li>
+                <li>Select a deck from the "Saved Decks" list to edit its contents.</li>
+                <li>Enter the deck contents in the textarea.</li>
+                <li>Click "Check Decks" to submit and analyze your decks.</li>
+            </ol>
+            <p>Note: You need to add at least two decks before you can enter deck contents.</p>
+        </div>
+    </div>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -161,14 +211,19 @@
             }
 
             function loadDeckContents(deckName) {
-                saveDeckContents();
-                deckContents.value = decks[deckName];
-                deckContents.placeholder = `Enter contents for "${deckName}" below: 
-Example:
-4 Lightning Bolt
-3 Tarmogoyf
-...`;
+                saveDeckContents(); // Save current deck contents before loading new one
+                deckContents.value = decks[deckName] || ''; // Load new deck contents or empty string if not exists
+                deckContents.placeholder = `Enter contents for "${deckName}" below:`;
             }
+
+            // Add or update the event listener for deck selection
+            document.querySelectorAll('input[name="deck"]').forEach(radio => {
+                radio.addEventListener('change', function() {
+                    if (this.checked) {
+                        loadDeckContents(this.value);
+                    }
+                });
+            });
 
             deckContents.addEventListener('input', saveDeckContents);
 
