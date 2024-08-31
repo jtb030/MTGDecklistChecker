@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MTG Deck Checker - Minimal</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #121212;
+            color: #d1d0c5;
+        }
+        .section {
+            margin-bottom: 30px;
+        }
+        .row {
+            display: flex;
+            gap: 20px;
+        }
+        .column {
+            flex: 1;
+            padding: 15px;
+            background-color: #222222;
+        }
+        .column h2 {
+            margin-top: 0;
+            color: #f0a43d;
+        }
+        textarea {
+            width: 100%;
+            height: 200px;
+            margin-bottom: 10px;
+            background-color: #222222;
+            color: #d1d0c5;
+        }
+        button {
+            padding: 10px 20px;
+            background-color: #f0a43d;
+            color: #323437;
+            border: none;
+            cursor: pointer;
+        }
+        .instructions {
+            background-color: #222222;
+            padding: 15px;
+            border-radius: 5px;
+        }
+        .page-title {
+            text-align: center;
+            color: #f0a43d;
+            font-size: 2.5em;
+            margin-bottom: 30px;
+            letter-spacing: 2px;
+        }
+    </style>
+</head>
+<body>
+    <h1 class="page-title">MTG Deck Checker</h1>
+    <form id="deckForm" method="POST">
+        <div class="section">
+            <h2>Saved Decks</h2>
+            <div id="deck_list"></div>
+        </div>
+
+        <div class="row">
+            <div class="column">
+                <h2>Deck Input</h2>
+                <textarea id="deck_contents" name="deck_contents" placeholder="Enter your deck list here, one card per line"></textarea>
+                <button type="button" id="add_deck">Add Deck</button>
+            </div>
+
+            <div class="column">
+                <h2>Instructions</h2>
+                <div class="instructions">
+                    <p>You can add custom cards in the deck input. For each custom card, please provide:</p>
+                    <ul>
+                        <li>Card Name</li>
+                        <li>Mana Cost</li>
+                        <li>Card Type</li>
+                        <li>Rules Text</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <input type="hidden" id="all_decks" name="all_decks">
+        <input type="submit" value="Check Decks">
+    </form>
+
+    <script>
+        const deckForm = document.getElementById('deckForm');
+        const deckContents = document.getElementById('deck_contents');
+        const addDeckButton = document.getElementById('add_deck');
+        const deckList = document.getElementById('deck_list');
+        const allDecksInput = document.getElementById('all_decks');
+        const decks = {};
+
+        addDeckButton.addEventListener('click', () => {
+            const deckName = prompt("Enter a name for this deck:");
+            if (deckName && deckName.trim() && !(deckName in decks)) {
+                decks[deckName] = deckContents.value;
+                updateDeckList();
+                deckContents.value = '';
+            }
+        });
+
+        function updateDeckList() {
+            deckList.innerHTML = '';
+            for (const deckName in decks) {
+                const button = document.createElement('button');
+                button.textContent = deckName;
+                button.type = 'button';
+                button.addEventListener('click', () => loadDeck(deckName));
+                deckList.appendChild(button);
+            }
+            allDecksInput.value = JSON.stringify(decks);
+        }
+
+        function loadDeck(deckName) {
+            deckContents.value = decks[deckName];
+        }
+
+        deckForm.addEventListener('submit', (e) => {
+            decks['current'] = deckContents.value;
+            allDecksInput.value = JSON.stringify(decks);
+        });
+    </script>
+</body>
+</html>
