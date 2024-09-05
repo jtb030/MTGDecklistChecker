@@ -26,7 +26,7 @@
             background-color: #222222;
         }
         .column h2 {
-            margin-top: 0;
+            margin-top: 10px;
             color: #f0a43d;
         }
         textarea {
@@ -36,12 +36,82 @@
             background-color: #222222;
             color: #d1d0c5;
         }
+        .small-textarea {
+            resize: none;
+            scrollbar-width: none;
+            width: 100%;
+            height: 15px;
+            margin-bottom: 10px;
+            background-color: #222222;
+            color: #d1d0c5;
+        }
         button {
             padding: 10px 20px;
-            background-color: #f0a43d;
-            color: #323437;
             border: none;
             cursor: pointer;
+        }
+        button.primary {
+            background-color: #f0a43d;
+            color: #323437;
+        }
+        button.secondary {
+            background-color: #3d6d80;
+            color: #d1d0c5;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 10px;
+            padding: 5px; /* Reduced padding to accommodate new elements */
+        }
+        button.secondary .load-span,
+        button.secondary .delete-span {
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            font-size: 0.8em; /* Slightly smaller font for the action spans */
+        }
+        button.secondary .load-span {
+            background-color: #4CAF50;
+            color: white;
+        }
+        button.secondary .load-span:hover {
+            background-color: #45a049;
+        }
+        button.secondary .delete-span {
+            background-color: #f44336;
+            color: white;
+        }
+        button.secondary .delete-span:hover {
+            background-color: #da190b;
+        }
+        button.secondary .name-span {
+            flex-grow: 1;
+            text-align: center;
+            font-weight: bold;
+            padding: 0 10px; /* Add some padding to separate from action spans */
+        }
+        button.secondary .edit-save-span {
+            cursor: pointer;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+            font-size: 0.8em;
+            background-color: #ffa500; /* Orange color for edit/save */
+            color: white;
+        }
+        button.secondary .edit-save-span:hover {
+            background-color: #ff8c00;
+        }
+        button.secondary .name-span:focus {
+            outline: 2px solid #ffa500;
+            border-radius: 3px;
+        }
+        button.tertiary {
+            margin-top: 10px;
+            background-color: #18803d;
+            color:#d1d0c5
         }
         .instructions {
             background-color: #222222;
@@ -55,39 +125,57 @@
             margin-bottom: 30px;
             letter-spacing: 2px;
         }
+        #deck_list {
+            display: flex;
+            flex-direction: column;
+        }
+        #deck_list button {
+            margin-bottom: 10px;
+            width: 100%;
+        }
     </style>
 </head>
 <body>
     <h1 class="page-title">MTG Deck Checker</h1>
     <form id="deckForm" method="POST">
-        <div class="section">
+        <!-- <div class="section column">
             <h2>Saved Decks</h2>
             <div id="deck_list"></div>
-        </div>
+        </div> -->
 
         <div class="row">
+            
             <div class="column">
+                <h2>Name Input</h2>
+                <div id="deck_name_in"></div>
+                <textarea id="deck_name" name="deck_name" class="small-textarea" placeholder="Enter a name for this deck"></textarea>
+                <button type="button" id="add_name" class="primary">Add Name</button>
+
+                <h2>Saved Decks</h2>
+                <div id="deck_list"></div>
+
+
                 <h2>Deck Input</h2>
                 <textarea id="deck_contents" name="deck_contents" placeholder="Enter your deck list here, one card per line"></textarea>
-                <button type="button" id="add_deck">Add Deck</button>
+                <button type="button" id="add_deck" class="primary">Add Deck</button>
             </div>
 
             <div class="column">
                 <h2>Instructions</h2>
                 <div class="instructions">
-                    <p>You can add custom cards in the deck input. For each custom card, please provide:</p>
+                    <p>This tool allows you to check all your deck lists to find any duplicate cards, how many times they appear, and which deck they are in.</p>
+                    <p>To use the tool:</p>
                     <ul>
-                        <li>Card Name</li>
-                        <li>Mana Cost</li>
-                        <li>Card Type</li>
-                        <li>Rules Text</li>
+                        <li>Enter at least two deck names. The names should appear in the "Saved Decks" section.</li>
+                        <li>Copy/Paste or Manually enter your deck list into the "Deck Input" section.</li>
+                        <li>Run the Check!</li>
                     </ul>
                 </div>
             </div>
         </div>
 
         <input type="hidden" id="all_decks" name="all_decks">
-        <input type="submit" value="Check Decks">
+        <button type="submit" class="tertiary">Check Decks</button>
     </form>
 
     <script>
@@ -107,16 +195,84 @@
             }
         });
 
+        const deckNameInput = document.getElementById('deck_name');
+        const addNameButton = document.getElementById('add_name');
+
+        addNameButton.addEventListener('click', addDeckName);
+        deckNameInput.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                event.preventDefault(); // Prevent default behavior (new line)
+                addDeckName();
+            }
+        });
+
+        function addDeckName() {
+            const deckName = deckNameInput.value.trim();
+            if (deckName && !(deckName in decks)) {
+                decks[deckName] = '';
+                updateDeckList();
+                deckNameInput.value = '';
+            }
+        }
+
         function updateDeckList() {
             deckList.innerHTML = '';
             for (const deckName in decks) {
                 const button = document.createElement('button');
-                button.textContent = deckName;
-                button.type = 'button';
-                button.addEventListener('click', () => loadDeck(deckName));
+                button.classList.add('secondary', 'deck-button');
+                
+                const editSaveSpan = document.createElement('span');
+                editSaveSpan.innerHTML = '✏️ Edit'; // Icon and text for edit
+                editSaveSpan.classList.add('edit-save-span');
+                editSaveSpan.addEventListener('click', (e) => toggleEditSave(e, deckName));
+                
+                const nameSpan = document.createElement('span');
+                nameSpan.textContent = deckName;
+                nameSpan.classList.add('name-span');
+                nameSpan.contentEditable = false; // Initially not editable
+                
+                const deleteSpan = document.createElement('span');
+                deleteSpan.innerHTML = '🗑️ Delete'; // Icon and text
+                deleteSpan.classList.add('delete-span');
+                deleteSpan.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    deleteDeck(deckName);
+                });
+                
+                button.appendChild(editSaveSpan);
+                button.appendChild(nameSpan);
+                button.appendChild(deleteSpan);
                 deckList.appendChild(button);
             }
             allDecksInput.value = JSON.stringify(decks);
+        }
+
+        function toggleEditSave(event, oldDeckName) {
+            const button = event.target.closest('.deck-button');
+            const editSaveSpan = button.querySelector('.edit-save-span');
+            const nameSpan = button.querySelector('.name-span');
+
+            if (editSaveSpan.innerHTML.includes('Edit')) {
+                // Switch to edit mode
+                editSaveSpan.innerHTML = '💾 Save';
+                nameSpan.contentEditable = true;
+                nameSpan.focus();
+            } else {
+                // Save changes
+                editSaveSpan.innerHTML = '✏️ Edit';
+                nameSpan.contentEditable = false;
+                const newDeckName = nameSpan.textContent.trim();
+                if (newDeckName && newDeckName !== oldDeckName) {
+                    decks[newDeckName] = decks[oldDeckName];
+                    delete decks[oldDeckName];
+                    updateDeckList(); // Refresh the list to reflect changes
+                }
+            }
+        }
+
+        function deleteDeck(deckName) {
+            delete decks[deckName];
+            updateDeckList();
         }
 
         function loadDeck(deckName) {
