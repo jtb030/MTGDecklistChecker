@@ -221,25 +221,24 @@
                 const button = document.createElement('button');
                 button.classList.add('secondary', 'deck-button');
                 
-                const editSaveSpan = document.createElement('span');
-                editSaveSpan.innerHTML = '✏️ Edit'; // Icon and text for edit
-                editSaveSpan.classList.add('edit-save-span');
-                editSaveSpan.addEventListener('click', (e) => toggleEditSave(e, deckName));
+                const loadSpan = document.createElement('span');
+                loadSpan.innerHTML = '📂 Load'; // Icon and text
+                loadSpan.classList.add('load-span');
+                loadSpan.addEventListener('click', () => loadDeck(deckName)); // Load functionality
                 
                 const nameSpan = document.createElement('span');
                 nameSpan.textContent = deckName;
                 nameSpan.classList.add('name-span');
-                nameSpan.contentEditable = false; // Initially not editable
                 
                 const deleteSpan = document.createElement('span');
-                deleteSpan.innerHTML = '🗑️ Delete'; // Icon and text
+                deleteSpan.innerHTML = '🗑️'; // Icon and text
                 deleteSpan.classList.add('delete-span');
                 deleteSpan.addEventListener('click', (e) => {
                     e.stopPropagation();
                     deleteDeck(deckName);
                 });
                 
-                button.appendChild(editSaveSpan);
+                button.appendChild(loadSpan);
                 button.appendChild(nameSpan);
                 button.appendChild(deleteSpan);
                 deckList.appendChild(button);
